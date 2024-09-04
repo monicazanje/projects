@@ -1,0 +1,167 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_app/view/loginscreen.dart';
+import 'package:flutter_app/view/resetpass.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class LoginOtp extends StatefulWidget{
+  const LoginOtp({super.key});
+  @override
+  State<LoginOtp>createState()=>_LoginOtpState();
+}
+class _LoginOtpState extends State<LoginOtp>{
+  final List<TextEditingController> otpcontroller=List.generate(6,(_)=>TextEditingController());
+  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+  void _handleOtpInput(int index, String value) {
+    if (value.length == 1 && index < 5) {
+      _focusNodes[index + 1].requestFocus(); // Move to the next field
+    }
+    if (value.isEmpty && index > 0) {
+      _focusNodes[index - 1].requestFocus(); // Move to the previous field if backspace
+    }
+  }
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+                  margin: const EdgeInsets.only(left: 30,top:40),
+                  child: Text(
+                        "FarmerEats",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.beVietnamPro(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: const Color.fromRGBO(0, 0, 0, 1),
+                        ),
+                      ),
+                ),
+                const SizedBox(height: 80,),
+                 Container(
+                  margin: const EdgeInsets.only(left: 30,top:40),
+                  child: Text(
+                        "Verify OTP",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.beVietnamPro(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: const Color.fromRGBO(0, 0, 0, 1),
+                        ),
+                      ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(left: 30,top:24),
+                      child: Text(
+                            "Remember your pasword?",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.beVietnamPro(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: const Color.fromARGB(255, 147, 147, 147),
+                            ),
+                          ),
+                    ),
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(context,MaterialPageRoute(builder: (context){return const Login() ;}));
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(left:5,top:24),
+                        child: Text(
+                              " Login",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.beVietnamPro(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: const Color.fromRGBO(213, 113, 91, 1),
+                              ),
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  alignment: Alignment.center,
+        padding: const EdgeInsets.all(20),
+        margin: const EdgeInsets.only(top: 20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+        ),
+        child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(5, (index) {
+                return Container(
+                  decoration: const BoxDecoration(
+                  color:   Color.fromARGB(255, 226, 226, 226),
+                  borderRadius: BorderRadius.all(Radius.circular(10))
+                ),
+                  width: 58,
+                  height: 59,
+                  child: TextField(
+                    controller: otpcontroller[index],
+                    focusNode: _focusNodes[index],
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    maxLength: 1,
+                    decoration:const  InputDecoration(
+                      
+                      border: InputBorder.none,
+                      counterText: ''
+                    ),
+                    onChanged: (value) => _handleOtpInput(index, value),
+                  ),
+                );
+              }),),
+                ),
+                Container(
+                                    alignment: Alignment.center,
+                                    width: MediaQuery.of(context).size.width * 1,
+                                    margin: const EdgeInsets.only(left: 30,right: 30 ,top: 30),
+                                    padding: const EdgeInsets.all(10),
+                                    height: 52,
+                  
+                                    decoration:  const BoxDecoration(
+                                        color:  Color.fromRGBO(213, 113, 91, 1),
+                                        borderRadius:  BorderRadius.all(Radius.circular(30))),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context,MaterialPageRoute(builder: (context){return const ResetPass() ;}));
+                                      },
+                                      child: Text(
+                                        "Submit",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.beVietnamPro(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color.fromRGBO(255, 255, 255, 1),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 10),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                        "Resend Code",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.beVietnamPro(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color.fromRGBO(0, 0, 0, 1),
+                                          decoration: TextDecoration.underline
+                                        ),
+                                      ),
+                                  )
+        
+        
+        ],),
+      ),
+
+    );
+  }
+}
