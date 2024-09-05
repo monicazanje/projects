@@ -95,18 +95,7 @@ class _ResetPassState extends State<ResetPass>{
                           ),
                     
                     prefixIcon: Image.asset("assets/Vector.png"),
-                    suffix: GestureDetector(
-                      onTap: (){},
-                      child: Text(
-                          "Forgot?   ",
-                          
-                          style: GoogleFonts.beVietnamPro(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: const Color.fromRGBO(213, 113, 91, 1),
-                          ),
-                        ),
-                    )
+                    
                   ),     
                 ),
               ),Container(

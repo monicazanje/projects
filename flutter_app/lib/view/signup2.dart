@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/view/signupverification.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Signup2 extends StatefulWidget{
@@ -150,6 +151,7 @@ class _Signup2State extends State<Signup2>{
                  children: [
                   Container(
                     margin:  const EdgeInsets.only(left: 30,top: 14,bottom: 10),
+                    padding: const EdgeInsets.only(left: 10,top: 5),
                     height: 50,
                     width: MediaQuery.of(context).size.width*0.3,
                     decoration: const BoxDecoration(
@@ -160,7 +162,7 @@ class _Signup2State extends State<Signup2>{
                       controller: statecontroller,
                       decoration:  InputDecoration(
                         border: InputBorder.none,
-                        hintText: "   Status",
+                        hintText: "State",
                         hintStyle: GoogleFonts.beVietnamPro(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -173,6 +175,7 @@ class _Signup2State extends State<Signup2>{
                                  ),
                    Container(
                     margin:  const EdgeInsets.only(right: 30,top: 14,bottom: 10),
+                    padding: const EdgeInsets.only(left: 30),
                     height: 50,
                     width: MediaQuery.of(context).size.width*0.5,
                     decoration: const BoxDecoration(
@@ -194,6 +197,51 @@ class _Signup2State extends State<Signup2>{
                                  ),
                  ],
                ),
+               const SizedBox(height: 100,),
+               Container(
+                margin: const EdgeInsets.only(left: 30,right: 30,top: 70),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                  Container(
+                alignment: Alignment.center,
+               
+                child: IconButton(
+                  onPressed: (){
+                  Navigator.of(context).pop();
+                },
+                  icon: const Icon(Icons.arrow_back,size: 30,))
+                    
+              ),
+              Container(
+                                    alignment: Alignment.center,
+                                    width: MediaQuery.of(context).size.width * 0.6,
+                                  
+                                    padding: const EdgeInsets.only(left: 30,right: 30,top: 10,bottom: 10),
+                                    height: 52,
+                  
+                                    decoration:  const BoxDecoration(
+                                        color:  Color.fromRGBO(213, 113, 91, 1),
+                                        borderRadius:  BorderRadius.all(Radius.circular(30))),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context,MaterialPageRoute(builder: (context){return const Signupver() ;}));
+                                      },
+                                      child: Text(
+                                        "Continue",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.beVietnamPro(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color.fromRGBO(255, 255, 255, 1),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                ],),
+              )
         ],),
       ),
     );

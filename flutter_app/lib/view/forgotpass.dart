@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/view/loginotp.dart';
+import 'package:flutter_app/view/loginscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
@@ -59,7 +60,8 @@ class _ForgotpassState extends State<Forgotpass>{
                         ),
                   ),
                   GestureDetector(
-                    onTap: (){},
+                    onTap: (){Navigator.push(context,MaterialPageRoute(builder: (context){return const Login() ;}));
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(left:5,top:24),
                       child: Text(

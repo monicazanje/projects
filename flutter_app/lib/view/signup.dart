@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/view/loginscreen.dart';
 import 'package:flutter_app/view/signup2.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -225,16 +226,21 @@ class _SignupState extends State<Signup>{
                   Container(
                 alignment: Alignment.center,
                
-                child: Text(
-                      "Login",
-                      // textAlign: TextAlign.center,
-                      style: GoogleFonts.beVietnamPro(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: const Color.fromRGBO(0, 0, 0, 1),
-                        decoration: TextDecoration.underline
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.push(context,MaterialPageRoute(builder: (context){return const Login() ;}));
+                  },
+                  child: Text(
+                        "Login",
+                        // textAlign: TextAlign.center,
+                        style: GoogleFonts.beVietnamPro(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: const Color.fromRGBO(0, 0, 0, 1),
+                          decoration: TextDecoration.underline
+                        ),
                       ),
-                    ),
+                ),
                     
               ),
               Container(
