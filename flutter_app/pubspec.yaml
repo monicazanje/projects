@@ -12,6 +12,8 @@ dependencies:
   carousel_slider: ^5.0.0
   google_fonts: ^6.2.1
   http: ^1.2.2
+  dio: ^5.7.0
+  file_picker: ^8.1.2
 
 dev_dependencies:
   flutter_test:

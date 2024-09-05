@@ -3,7 +3,13 @@ import 'package:flutter_app/view/signupverification.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Signup2 extends StatefulWidget{
-  const Signup2({super.key});
+  final TextEditingController namecontroller;
+  final TextEditingController emailcontroller;
+  final TextEditingController phonecontroller;
+  final TextEditingController passcontroller;
+  final TextEditingController repasscontroller;
+
+  const Signup2({super.key,required this.emailcontroller,required this.namecontroller,required this.passcontroller,required this.phonecontroller,required this.repasscontroller});
   @override
   State<Signup2>createState()=>_Signup2State();
 }
@@ -110,7 +116,7 @@ class _Signup2State extends State<Signup2>{
                   borderRadius: BorderRadius.all(Radius.circular(10))
                 ),
                 child: TextField(
-                  controller: statecontroller,
+                  controller: streetcontroller,
                   decoration:  InputDecoration(
                     border: InputBorder.none,
                     hintText: "Street Address",
@@ -226,7 +232,21 @@ class _Signup2State extends State<Signup2>{
                                         borderRadius:  BorderRadius.all(Radius.circular(30))),
                                     child: GestureDetector(
                                       onTap: () {
-                                        Navigator.push(context,MaterialPageRoute(builder: (context){return const Signupver() ;}));
+                                        Navigator.push(context,MaterialPageRoute(builder: (context){return 
+                                         Signupver(
+                                          namecontroller:widget.namecontroller,
+                                          emailcontroller: widget.emailcontroller,
+                                          phonecontroller: widget.phonecontroller,
+                                          passcontroller: widget.passcontroller,
+                                          repasscontroller:widget.repasscontroller ,
+                                          businesscontroller: businesscontroller,
+                                          citycontroller: citycontroller,
+                                          informalcontroller: informalcontroller,
+                                          statecontroller: statecontroller,
+                                          streetcontroller: statecontroller,
+                                          zipcodecontroller: zipcodecontroller,
+                                         )
+                                          ;}));
                                       },
                                       child: Text(
                                         "Continue",

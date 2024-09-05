@@ -1,13 +1,42 @@
+import 'dart:developer';
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/view/signuphours.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Signupver extends StatefulWidget{
-  const Signupver({super.key});
+  final TextEditingController namecontroller;
+  final TextEditingController emailcontroller;
+  final TextEditingController phonecontroller;
+  final TextEditingController passcontroller;
+  final TextEditingController repasscontroller;
+  final TextEditingController businesscontroller;
+  final TextEditingController informalcontroller;
+  final TextEditingController streetcontroller;
+  final TextEditingController citycontroller;
+  final TextEditingController zipcodecontroller;
+  final TextEditingController statecontroller;
+  const Signupver({
+    super.key,
+    required this.emailcontroller,
+    required this.namecontroller,
+    required this.passcontroller,
+    required this.phonecontroller,
+    required this.repasscontroller,
+    required this.businesscontroller,
+    required this.citycontroller, 
+    required this.informalcontroller,
+    required this.statecontroller,
+    required this.streetcontroller,
+    required this.zipcodecontroller,
+    });
   @override
   State<Signupver>createState()=>_SignupverState();
 }
 class _SignupverState extends State<Signupver>{
+  FormData? data;
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -76,7 +105,9 @@ class _SignupverState extends State<Signupver>{
                       ),
                       const Spacer(flex: 1,),
                   GestureDetector(
-                    onTap: (){},
+                    onTap: ()async{
+                      data= await uplodaepdf();
+                    },
                     child: Container(
                       height: 53,
                       width: 53,
@@ -120,7 +151,34 @@ class _SignupverState extends State<Signupver>{
                                       borderRadius:  BorderRadius.all(Radius.circular(30))),
                                   child: GestureDetector(
                                     onTap: () {
-                                      Navigator.push(context,MaterialPageRoute(builder: (context){return const Signuphours() ;}));
+                                      if (data != null) {
+                      
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => 
+                          Signuphours(
+                            namecontroller:widget.namecontroller,
+                                          emailcontroller: widget.emailcontroller,
+                                          phonecontroller: widget.phonecontroller,
+                                          passcontroller: widget.passcontroller,
+                                          repasscontroller:widget.repasscontroller ,
+                                          businesscontroller: widget.businesscontroller,
+                                          citycontroller: widget.citycontroller,
+                                          informalcontroller: widget.informalcontroller,
+                                          statecontroller: widget.statecontroller,
+                                          streetcontroller: widget.statecontroller,
+                                          zipcodecontroller: widget.zipcodecontroller,
+                                          data: data,
+                          ),
+                        ),
+                      );
+                    } else {
+                     
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Please attach a file before continuing.")),
+                      );
+                    }
                                     },
                                     child: Text(
                                       "Continue",
@@ -139,5 +197,22 @@ class _SignupverState extends State<Signupver>{
       
       ],),
     );
+  }
+  Future uplodaepdf()async{
+    // var dio=Dio();
+    FilePickerResult? result=await FilePicker.platform.pickFiles();
+    if(result !=null){
+      File file=File(result.files.single.path ?? " ");
+      String filename=file.path.split('/').last;
+      String filepath=file.path;
+      FormData  data=FormData.fromMap({
+        'pdffile':await MultipartFile.fromFile(filepath,filename: filename),
+        'name':"user_resistration.pdf"
+      });
+      return data;
+    }else{
+      log("result is null");
+    }
+
   }
 }

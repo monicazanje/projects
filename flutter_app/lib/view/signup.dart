@@ -255,7 +255,14 @@ class _SignupState extends State<Signup>{
                                         borderRadius:  BorderRadius.all(Radius.circular(30))),
                                     child: GestureDetector(
                                       onTap: () {
-                                        Navigator.push(context,MaterialPageRoute(builder: (context){return const Signup2() ;}));
+                                        Navigator.push(context,MaterialPageRoute(builder: (context){return 
+                                        Signup2(
+                                          namecontroller:namecontroller,
+                                          emailcontroller: emailcontroller,
+                                          phonecontroller: phonecontroller,
+                                          passcontroller: passcontroller,
+                                          repasscontroller:newpasscontroller ,
+                                          ) ;}));
                                       },
                                       child: Text(
                                         "Continue",
