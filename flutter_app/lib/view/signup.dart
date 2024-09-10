@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/controller/resistercontroller.dart';
 import 'package:flutter_app/view/loginscreen.dart';
 import 'package:flutter_app/view/signup2.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -10,22 +12,9 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  TextEditingController namecontroller = TextEditingController();
-  TextEditingController emailcontroller = TextEditingController();
-  TextEditingController phonecontroller = TextEditingController();
-  TextEditingController passcontroller = TextEditingController();
-  TextEditingController newpasscontroller = TextEditingController();
-
-  bool allfieldfill() {
-    return namecontroller.text.isNotEmpty &&
-        emailcontroller.text.isNotEmpty &&
-        phonecontroller.text.isNotEmpty &&
-        passcontroller.text.isNotEmpty &&
-        newpasscontroller.text.isNotEmpty;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final regProvider = Provider.of<RegisterController>(context);
     return Scaffold(
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -133,7 +122,7 @@ class _SignupState extends State<Signup> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: namecontroller,
+                controller: regProvider.nameController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Full Name",
@@ -154,7 +143,7 @@ class _SignupState extends State<Signup> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: emailcontroller,
+                controller: regProvider.emailController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Email Address",
@@ -175,7 +164,7 @@ class _SignupState extends State<Signup> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: phonecontroller,
+                controller: regProvider.phoneController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Phone Number",
@@ -196,7 +185,7 @@ class _SignupState extends State<Signup> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: passcontroller,
+                controller: regProvider.passController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Password",
@@ -217,7 +206,7 @@ class _SignupState extends State<Signup> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: newpasscontroller,
+                controller: regProvider.repassController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Re-enter Password",
@@ -257,25 +246,19 @@ class _SignupState extends State<Signup> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: (){if (allfieldfill()) {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return Signup2(
-                                namecontroller: namecontroller,
-                                emailcontroller: emailcontroller,
-                                phonecontroller: phonecontroller,
-                                passcontroller: passcontroller,
-                                repasscontroller: newpasscontroller,
-                              );
-                            }));
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Please fill in all the fields.'),
-                              ),
-                            );
-                          }
-
+                    onTap: () {
+                      if (regProvider.allfieldfill()) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return const Signup2();
+                        }));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill in all the fields.'),
+                          ),
+                        );
+                      }
                     },
                     child: Container(
                       alignment: Alignment.center,

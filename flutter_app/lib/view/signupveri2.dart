@@ -1,62 +1,21 @@
-
-
-import 'dart:developer';
-
-import 'package:dio/dio.dart';
+import 'package:flutter_app/controller/resistercontroller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/view/signupconf.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class Signupver2 extends StatefulWidget {
-  final TextEditingController namecontroller;
-  final TextEditingController emailcontroller;
-  final TextEditingController phonecontroller;
-  final TextEditingController passcontroller;
-  final TextEditingController repasscontroller;
-  final TextEditingController businesscontroller;
-  final TextEditingController informalcontroller;
-  final TextEditingController streetcontroller;
-  final TextEditingController citycontroller;
-  final TextEditingController zipcodecontroller;
-  String? selectstate;
-  final FormData? data;
-  final String? selectedSize;
-  Set<String> selecttime;
-  Signupver2(
-      {super.key,
-      required this.emailcontroller,
-      required this.namecontroller,
-      required this.passcontroller,
-      required this.phonecontroller,
-      required this.repasscontroller,
-      required this.businesscontroller,
-      required this.citycontroller,
-      required this.informalcontroller,
-      required this.selectstate,
-      required this.streetcontroller,
-      required this.zipcodecontroller,
-      required this.data,
-      required this.selectedSize,
-      required this.selecttime});
+  Signupver2({
+    super.key,
+  });
   @override
   State<Signupver2> createState() => _Signupver2State();
 }
 
 class _Signupver2State extends State<Signupver2> {
-  bool isLoading = false;
-  String? getFileName() {
-    if (widget.data != null) {
-      for (var entry in widget.data!.files) {
-        String fileName = entry.value.filename ?? 'No file selected';
-        return fileName;
-      }
-    }
-    return 'No file selected';
-  }
-
   @override
   Widget build(BuildContext context) {
+    final regProvider = Provider.of<RegisterController>(context);
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,7 +113,7 @@ class _Signupver2State extends State<Signupver2> {
             child: Row(
               children: [
                 Text(
-                  getFileName() ?? "",
+                  regProvider.getFileName() ?? "",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.beVietnamPro(
                       fontSize: 14,
@@ -192,8 +151,7 @@ class _Signupver2State extends State<Signupver2> {
                         ))),
                 GestureDetector(
                   onTap: () {
-                    onTap:
-                    isLoading ? null : signupPostRequest;
+                    regProvider.registerPostRequest(context);
                   },
                   child: Container(
                     alignment: Alignment.center,
@@ -205,7 +163,7 @@ class _Signupver2State extends State<Signupver2> {
                         color: Color.fromRGBO(213, 113, 91, 1),
                         borderRadius: BorderRadius.all(Radius.circular(30))),
                     child: Text(
-                      isLoading ? "Loading..." : "Continue",
+                      regProvider.isLoading ? "Loading..." : "Continue",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.beVietnamPro(
                         fontSize: 16,
@@ -223,42 +181,52 @@ class _Signupver2State extends State<Signupver2> {
     );
   }
 
-  Future<void> signupPostRequest() async {
-    var dio = Dio();
-    setState(() {
-      isLoading = true;
-    });
+  // Future<void> resisterPostRequest(
+  //     String name,
+  //     String email,
+  //     String phone,
+  //     String password,
+  //     String businessName,
+  //     String informalName,
+  //     String street,
+  //     String city,
+  //     String zipcode,
+  //     String state,
+  //     FormData? file) async {
+  //   String baseUrl = 'https://sowlab.com';
+  //   String endpoint = '/assignment/#/Login%2FRegister/post_user_register';
+  //   String fullUrl = baseUrl + endpoint;
+  //   Map<String, dynamic> requestData = {
+  //     'name': name,
+  //     'email': email,
+  //     'phone': phone,
+  //     'password': password,
+  //     'business_name': businessName,
+  //     'informal_name': informalName,
+  //     'street': street,
+  //     'city': city,
+  //     'zipcode': zipcode,
+  //     'state': state,
+  //     'file': file,
+  //   };
 
-    try {
-      String url = 'https://sowlab.com/assignment/#/Login%2FRegister/post_user_register';
-
-      FormData formData = FormData.fromMap({
-        'name': widget.namecontroller.text,
-        'email': widget.emailcontroller.text,
-        'phone': widget.phonecontroller.text,
-        'password': widget.passcontroller.text,
-        'business_name': widget.businesscontroller.text,
-        'informal_name': widget.informalcontroller.text,
-        'street': widget.streetcontroller.text,
-        'city': widget.citycontroller.text,
-        'zipcode': widget.zipcodecontroller.text,
-        'state': widget.selectstate,
-        'file': widget.data?.files[0],
-      });
-      Response response = await dio.post(url, data: formData);
-
-      if (response.statusCode == 200) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const Signupconf()));
-      } else {
-        log('Error: ${response.statusCode}, ${response.data}');
-      }
-    } catch (e) {
-      log('Error: $e');
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(fullUrl),
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: jsonEncode(requestData),
+  //     );
+  //     if (response.statusCode == 200) {
+  //       log('Success: ${response.body}');
+  //       log('OTP sent to your mobile');
+  //       Navigator.push(context, MaterialPageRoute(builder: (context) {
+  //         return Login();
+  //       }));
+  //     } else {
+  //       log('Error: ${response.statusCode}, ${response.body}');
+  //     }
+  //   } catch (e) {
+  //     log('Exception: $e');
+  //   }
+  // }
 }

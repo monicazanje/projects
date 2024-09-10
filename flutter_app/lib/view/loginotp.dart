@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter_app/controller/resistercontroller.dart';
 import 'package:http/http.dart ' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_app/view/loginscreen.dart';
 import 'package:flutter_app/view/resetpass.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class LoginOtp extends StatefulWidget {
@@ -15,20 +17,12 @@ class LoginOtp extends StatefulWidget {
 }
 
 class _LoginOtpState extends State<LoginOtp> {
-  final List<TextEditingController> otpcontroller =
-      List.generate(6, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
-  void _handleOtpInput(int index, String value) {
-    if (value.length == 1 && index < 5) {
-      _focusNodes[index + 1].requestFocus();
-    }
-    if (value.isEmpty && index > 0) {
-      _focusNodes[index - 1].requestFocus();
-    }
-  }
+  
+
 
   @override
   Widget build(BuildContext context) {
+    final regProvider = Provider.of<RegisterController>(context);
     return Scaffold(
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -115,14 +109,14 @@ class _LoginOtpState extends State<LoginOtp> {
                     width: 58,
                     height: 59,
                     child: TextField(
-                      controller: otpcontroller[index],
-                      focusNode: _focusNodes[index],
+                      controller: regProvider.otpcontroller[index],
+                      focusNode: regProvider.focusNodes[index],
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,
                       maxLength: 1,
                       decoration: const InputDecoration(
                           border: InputBorder.none, counterText: ''),
-                      onChanged: (value) => _handleOtpInput(index, value),
+                      onChanged: (value) =>regProvider.handleOtpInput(index, value),
                     ),
                   );
                 }),
@@ -131,7 +125,7 @@ class _LoginOtpState extends State<LoginOtp> {
             GestureDetector(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ResetPass(otpcontroller: otpcontroller,);
+                  return ResetPass(otpcontroller: regProvider.otpcontroller,);
                 }));
               },
               child: Container(

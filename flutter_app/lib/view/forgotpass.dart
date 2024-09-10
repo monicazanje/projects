@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/controller/resistercontroller.dart';
 import 'package:flutter_app/view/loginotp.dart';
 import 'package:flutter_app/view/loginscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class Forgotpass extends StatefulWidget {
   const Forgotpass({super.key});
@@ -14,14 +16,11 @@ class Forgotpass extends StatefulWidget {
 }
 
 class _ForgotpassState extends State<Forgotpass> {
-  TextEditingController phonecontroller = TextEditingController();
 
-  bool isValidPhoneNumber(String number) {
-    return RegExp(r'^\d{10}$').hasMatch(number);
-  }
 
   @override
   Widget build(BuildContext context) {
+    final regProvider = Provider.of<RegisterController>(context);
     return Scaffold(
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -99,7 +98,7 @@ class _ForgotpassState extends State<Forgotpass> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: phonecontroller,
+                controller: regProvider.phoneController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Phone Number",
@@ -114,23 +113,23 @@ class _ForgotpassState extends State<Forgotpass> {
             ),
             GestureDetector(
               onTap: () {
-                // String phoneNumber = phonecontroller.text.trim();
-                // if (phoneNumber.isEmpty) {
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(
-                //       content: Text('Please enter your phone number'),
-                //     ),
-                //   );
-                // } else if (!isValidPhoneNumber(phoneNumber)) {
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(
-                //       content: Text('Please enter a valid 10-digit phone number'),
-                //     ),
-                //   );
-                // } else {
-                //   resetpassPostRequest();  // Call the function to send the POST request
-                // }
-                resetpassPostRequest(phonecontroller.text);
+                String phoneNumber = regProvider.phoneController.text.trim();
+                if (phoneNumber.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter your phone number'),
+                    ),
+                  );
+                } else if (regProvider.isValidPhoneNumber(phoneNumber)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter a valid 10-digit phone number'),
+                    ),
+                  );
+                } else {
+                  resetpassPostRequest(regProvider.phoneController.text);
+                  
+                }
               },
               child: Container(
                 alignment: Alignment.center,

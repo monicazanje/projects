@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/controller/resistercontroller.dart';
 import 'package:flutter_app/view/forgotpass.dart';
 import 'package:flutter_app/view/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -10,10 +12,11 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController emailcontroller = TextEditingController();
-  TextEditingController passcontroller = TextEditingController();
+
+  
   @override
   Widget build(BuildContext context) {
+    final regProvider = Provider.of<RegisterController>(context);
     return Scaffold(
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -92,7 +95,7 @@ class _LoginState extends State<Login> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: emailcontroller,
+                controller: regProvider.emailController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Email Address",
@@ -113,7 +116,7 @@ class _LoginState extends State<Login> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: passcontroller,
+                controller: regProvider.passController,
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "Password",
@@ -141,19 +144,17 @@ class _LoginState extends State<Login> {
                     )),
               ),
             ),
-            Container(
-              alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width * 0.6,
-              margin: const EdgeInsets.only(left: 100, right: 80, top: 30),
-              padding: const EdgeInsets.all(10),
-              height: 50,
-              decoration: const BoxDecoration(
-                  color: Color.fromRGBO(213, 113, 91, 1),
-                  borderRadius: BorderRadius.all(Radius.circular(30))),
-              child: GestureDetector(
-                onTap: () {
-                  // Navigator.push(context,MaterialPageRoute(builder: (context){return const Forgotpass() ;}));
-                },
+            GestureDetector(
+              onTap: (){regProvider.loginUser(context);},
+              child: Container(
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width * 0.6,
+                margin: const EdgeInsets.only(left: 100, right: 80, top: 30),
+                padding: const EdgeInsets.all(10),
+                height: 50,
+                decoration: const BoxDecoration(
+                    color: Color.fromRGBO(213, 113, 91, 1),
+                    borderRadius: BorderRadius.all(Radius.circular(30))),
                 child: Text(
                   "Login",
                   textAlign: TextAlign.center,

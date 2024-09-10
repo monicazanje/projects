@@ -1,41 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/controller/resistercontroller.dart';
 import 'package:flutter_app/view/signupverification.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class Signup2 extends StatefulWidget {
-  final TextEditingController namecontroller;
-  final TextEditingController emailcontroller;
-  final TextEditingController phonecontroller;
-  final TextEditingController passcontroller;
-  final TextEditingController repasscontroller;
-
-  const Signup2(
-      {super.key,
-      required this.emailcontroller,
-      required this.namecontroller,
-      required this.passcontroller,
-      required this.phonecontroller,
-      required this.repasscontroller});
+  const Signup2({
+    super.key,
+  });
   @override
   State<Signup2> createState() => _Signup2State();
 }
 
 class _Signup2State extends State<Signup2> {
-  TextEditingController businesscontroller = TextEditingController();
-  TextEditingController informalcontroller = TextEditingController();
-  TextEditingController streetcontroller = TextEditingController();
-  TextEditingController citycontroller = TextEditingController();
-  TextEditingController zipcodecontroller = TextEditingController();
-
-  bool allfieldfill() {
-    return businesscontroller.text.isNotEmpty &&
-        informalcontroller.text.isNotEmpty &&
-        streetcontroller.text.isNotEmpty &&
-        citycontroller.text.isNotEmpty &&
-        zipcodecontroller.text.isNotEmpty ;
-  }
-
-  String? selectedState;
   List<String> statesOfIndia = [
     "Assam",
     "Bihar",
@@ -64,6 +41,7 @@ class _Signup2State extends State<Signup2> {
 
   @override
   Widget build(BuildContext context) {
+    final regProvider = Provider.of<RegisterController>(context);
     return Scaffold(
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -114,7 +92,7 @@ class _Signup2State extends State<Signup2> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: businesscontroller,
+                controller: regProvider.businessController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Business Name",
@@ -135,7 +113,7 @@ class _Signup2State extends State<Signup2> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: informalcontroller,
+                controller: regProvider.informalController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Informal Name",
@@ -159,7 +137,7 @@ class _Signup2State extends State<Signup2> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: streetcontroller,
+                controller: regProvider.streetController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Street Address",
@@ -185,7 +163,7 @@ class _Signup2State extends State<Signup2> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: citycontroller,
+                controller: regProvider.cityController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "city",
@@ -206,7 +184,10 @@ class _Signup2State extends State<Signup2> {
               children: [
                 Container(
                   margin: const EdgeInsets.only(left: 30, top: 10),
-                  padding: const EdgeInsets.only(left: 10, top: 5, ),
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    top: 5,
+                  ),
                   height: 50,
                   width: MediaQuery.of(context).size.width * 0.45,
                   decoration: const BoxDecoration(
@@ -214,10 +195,11 @@ class _Signup2State extends State<Signup2> {
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: DropdownButtonFormField<String>(
                     // isDense: false,
-                    value: selectedState,
+                    value:regProvider.selectState,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 0),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 0),
                     ),
                     hint: Text(
                       "State",
@@ -227,7 +209,8 @@ class _Signup2State extends State<Signup2> {
                         color: const Color.fromRGBO(0, 0, 0, 0.3),
                       ),
                     ),
-                    items: statesOfIndia.map<DropdownMenuItem<String>>((String state) {
+                    items: statesOfIndia
+                        .map<DropdownMenuItem<String>>((String state) {
                       return DropdownMenuItem<String>(
                         value: state,
                         child: Text(
@@ -242,13 +225,13 @@ class _Signup2State extends State<Signup2> {
                     }).toList(),
                     onChanged: (String? newValue) {
                       setState(() {
-                        selectedState = newValue!;
+                        regProvider.selectState= newValue!;
                       });
                     },
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(right: 30, top: 10,left: 10),
+                  margin: const EdgeInsets.only(right: 30, top: 10, left: 10),
                   padding: const EdgeInsets.only(left: 30),
                   height: 50,
                   width: MediaQuery.of(context).size.width * 0.35,
@@ -256,7 +239,7 @@ class _Signup2State extends State<Signup2> {
                       color: Color.fromARGB(255, 226, 226, 226),
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: TextField(
-                    controller: zipcodecontroller,
+                    controller: regProvider.zipcodeController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: "Enter Zipcode",
@@ -291,22 +274,10 @@ class _Signup2State extends State<Signup2> {
                           ))),
                   GestureDetector(
                     onTap: () {
-                      if (allfieldfill()) {
+                      if (regProvider.allfieldfill2()) {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return Signupver(
-                            namecontroller: widget.namecontroller,
-                            emailcontroller: widget.emailcontroller,
-                            phonecontroller: widget.phonecontroller,
-                            passcontroller: widget.passcontroller,
-                            repasscontroller: widget.repasscontroller,
-                            businesscontroller: businesscontroller,
-                            citycontroller: citycontroller,
-                            informalcontroller: informalcontroller,
-                            streetcontroller: streetcontroller,
-                            zipcodecontroller: zipcodecontroller,
-                            selectstate: selectedState,
-                          );
+                          return Signupver();
                         }));
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

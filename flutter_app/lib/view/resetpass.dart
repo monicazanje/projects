@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/controller/resistercontroller.dart';
 import 'package:flutter_app/view/loginscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class ResetPass extends StatefulWidget {
@@ -15,34 +17,11 @@ class ResetPass extends StatefulWidget {
 }
 
 class _ResetPassState extends State<ResetPass> {
-  TextEditingController newpasscontroller = TextEditingController();
-  TextEditingController confpasscontroller = TextEditingController();
-  bool validatePasswords() {
-    String newPassword = newpasscontroller.text.trim();
-    String confirmPassword = confpasscontroller.text.trim();
-
-    if (newPassword.isEmpty || confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Both fields are required'),
-        ),
-      );
-      return false;
-    }
-
-    if (newPassword != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match'),
-        ),
-      );
-      return false;
-    }
-    return true;
-  }
+  
 
   @override
   Widget build(BuildContext context) {
+    final regProvider = Provider.of<RegisterController>(context);
     return Scaffold(
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -120,7 +99,7 @@ class _ResetPassState extends State<ResetPass> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: newpasscontroller,
+                controller:regProvider.passController,
                 obscureText: true,
                 decoration: InputDecoration(
                   border: InputBorder.none,
@@ -142,7 +121,7 @@ class _ResetPassState extends State<ResetPass> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller: confpasscontroller,
+                controller: regProvider.repassController,
                 obscureText: true,
                 decoration: InputDecoration(
                   border: InputBorder.none,
@@ -158,7 +137,7 @@ class _ResetPassState extends State<ResetPass> {
             ),
             GestureDetector(
               onTap: () {
-                resetpassPostRequest(widget.otpcontroller,newpasscontroller.text,confpasscontroller.text);
+                resetpassPostRequest(regProvider.otpcontroller,regProvider.passController.text,regProvider.repassController.text);
               },
               child: Container(
                 alignment: Alignment.center,
@@ -196,35 +175,19 @@ class _ResetPassState extends State<ResetPass> {
     'password': newpass, 
     'cpassword': cnewpass 
   };
-
   try {
     final response = await http.post(
       Uri.parse(fullUrl),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(requestData),
     );
-
-    log('Response body: ${response.body}');
-
-    if (response.headers['content-type']?.contains('application/json') == true) {
-      var responseBody = jsonDecode(response.body);
-
-      if (responseBody['success'] == 'true') {
-        log('Success: ${responseBody['message']}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseBody['message'])),
-        );
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return const Login();
-        }));
-      } else {
-        log('Failed: ${responseBody['message']}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseBody['message'])),
-        );
-      }
+    if (response.statusCode == 200) {
+      log('Success: ${response.body}');
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const Login();
+                }));
     } else {
-
+      log('Error: ${response.statusCode}, ${response.body}');
       log('Error: Unexpected response format');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Unexpected response from the server. Please try again later.')),
@@ -238,48 +201,4 @@ class _ResetPassState extends State<ResetPass> {
   }
 }
 
-  
-//   Future<void> resetpassPostRequest(List<TextEditingController> token,String newpass,String cnewpass) async {
-//   String baseUrl = 'https://sowlab.com';
-//   String endpoint = '/assignment/#/Verify%20OTP/post_user_reset_password'; 
-//   String fullUrl = baseUrl + endpoint;
-//   String otp = widget.otpcontroller.map((controller) => controller.text.trim()).join('');
-//   Map<String, dynamic> requestData = {
-//     'token': otp,
-//     'password':newpass,
-//     'cpassword':cnewpass  
-//   };
-//  try {
-//     final response = await http.post(
-//       Uri.parse(fullUrl),
-//       headers: {'Content-Type': 'application/json'},
-//       body: jsonEncode(requestData),
-//     );
-//     if (response.statusCode == 200) {
-//       var responseBody = jsonDecode(response.body);
-
-//       if (responseBody['success'] == 'true') {
-//         log('Success: ${responseBody['message']}');
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           SnackBar(content: Text(responseBody['message'])),
-//         );
-//         Navigator.push(context, MaterialPageRoute(builder: (context) {
-//           return const Login();
-//         }));
-//       } else {
-//         log('Failed: ${responseBody['message']}');
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           SnackBar(content: Text(responseBody['message'])),
-//         );
-//       }
-//     } else {
-//       log('Error: ${response.statusCode}, ${response.body}');
-//     }
-//   } catch (e) {
-//     log('Exception: $e');
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       const SnackBar(content: Text('Error occurred. Please try again later.')),
-//     );
-//   }
-// }
 }

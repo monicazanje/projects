@@ -1,52 +1,26 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/controller/resistercontroller.dart';
 import 'package:flutter_app/view/signupveri2.dart';
+import 'package:flutter_app/view/timeslotwidget.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class Signuphours extends StatefulWidget {
-  final TextEditingController namecontroller;
-  final TextEditingController emailcontroller;
-  final TextEditingController phonecontroller;
-  final TextEditingController passcontroller;
-  final TextEditingController repasscontroller;
-  final TextEditingController businesscontroller;
-  final TextEditingController informalcontroller;
-  final TextEditingController streetcontroller;
-  final TextEditingController citycontroller;
-  final TextEditingController zipcodecontroller;
-  String? selectstate;
-  final FormData? data;
-  Signuphours(
-      {super.key,
-      required this.emailcontroller,
-      required this.namecontroller,
-      required this.passcontroller,
-      required this.phonecontroller,
-      required this.repasscontroller,
-      required this.businesscontroller,
-      required this.citycontroller,
-      required this.informalcontroller,
-      required this.selectstate,
-      required this.streetcontroller,
-      required this.zipcodecontroller,
-      required this.data});
+  const Signuphours({
+    super.key,
+  });
 
   @override
   State<Signuphours> createState() => _SignuphourState();
 }
 
 class _SignuphourState extends State<Signuphours> {
-  String selectedSize = '';
-  Set<String> selecttime = {};
   List<String> days = ["M", "T", "W", "Th", "F", "S", "Su"];
-
-  bool allfieldfill() {
-    return selectedSize.isNotEmpty && selecttime.isNotEmpty;
-  }
 
   @override
   Widget build(BuildContext context) {
+    final regProvider = Provider.of<RegisterController>(context);
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,7 +75,7 @@ class _SignuphourState extends State<Signuphours> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(right: 2+0, left: 30),
+            margin: const EdgeInsets.only(right: 2 + 0, left: 30),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(days.length, (index) {
@@ -110,7 +84,7 @@ class _SignuphourState extends State<Signuphours> {
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedSize = day;
+                        regProvider.selectedSize = day;
                       });
                     },
                     child: Container(
@@ -124,9 +98,9 @@ class _SignuphourState extends State<Signuphours> {
                         borderRadius: const BorderRadius.all(
                           Radius.circular(10),
                         ),
-                        color: selectedSize == day
+                        color: regProvider.selectedSize == day
                             ? const Color.fromRGBO(213, 113, 91, 1)
-                            : days.indexOf(selectedSize) > index
+                            : days.indexOf(regProvider.selectedSize) > index
                                 ? Colors.grey
                                 : Colors.transparent,
                       ),
@@ -135,9 +109,9 @@ class _SignuphourState extends State<Signuphours> {
                         style: GoogleFonts.imprima(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: selectedSize == day
+                          color: regProvider.selectedSize == day
                               ? Colors.white
-                              : days.indexOf(selectedSize) > index
+                              : days.indexOf(regProvider.selectedSize) > index
                                   ? Colors.white
                                   : const Color.fromRGBO(121, 119, 128, 1),
                         ),
@@ -153,77 +127,9 @@ class _SignuphourState extends State<Signuphours> {
                 const EdgeInsets.only(left: 30, right: 30, top: 30, bottom: 10),
             child: Row(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (selecttime.contains("8:00am - 10:00am")) {
-                        selecttime.remove("8:00am - 10:00am");
-                      } else {
-                        selecttime.add("8:00am - 10:00am");
-                      }
-                    });
-                  },
-                  child: Container(
-                    height: 48,
-                    width: 140,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          style: BorderStyle.solid,
-                          color: const Color.fromRGBO(38, 28, 18, 0.3),
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                        color: selecttime.contains("8:00am - 10:00am")
-                            ? const Color.fromRGBO(248, 197, 105, 1)
-                            : const Color.fromARGB(255, 203, 203, 203)),
-                    child: Text(
-                      "8:00am - 10:00am",
-                      style: GoogleFonts.imprima(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: const Color.fromARGB(255, 92, 92, 92)),
-                    ),
-                  ),
-                ),
-                const Spacer(
-                  flex: 1,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (selecttime.contains("10:00am - 1:00pm")) {
-                        selecttime.remove("10:00am - 1:00pm");
-                      } else {
-                        selecttime.add("10:00am - 1:00pm");
-                      }
-                    });
-                  },
-                  child: Container(
-                    height: 48,
-                    width: 140,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          style: BorderStyle.solid,
-                          color: const Color.fromRGBO(38, 28, 18, 0.3),
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                        color: selecttime.contains("10:00am - 1:00pm")
-                            ? const Color.fromRGBO(248, 197, 105, 1)
-                            : const Color.fromARGB(255, 203, 203, 203)),
-                    child: Text(
-                      "10:00am - 1:00pm",
-                      style: GoogleFonts.imprima(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: const Color.fromARGB(255, 92, 92, 92)),
-                    ),
-                  ),
-                ),
+                TimeSlotWidget(timeSlot: "8:00am - 10:00am"),
+                const Spacer(flex: 1,),
+                TimeSlotWidget(timeSlot: "10:00am - 12:00pm"),
               ],
             ),
           ),
@@ -231,115 +137,13 @@ class _SignuphourState extends State<Signuphours> {
             margin: const EdgeInsets.only(left: 30, right: 30, bottom: 10),
             child: Row(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (selecttime.contains("1:00pm - 4:00pm")) {
-                        selecttime.remove("1:00pm - 4:00pm");
-                      } else {
-                        selecttime.add("1:00pm - 4:00pm");
-                      }
-                    });
-                  },
-                  child: Container(
-                    height: 48,
-                    width: 140,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          style: BorderStyle.solid,
-                          color: const Color.fromRGBO(38, 28, 18, 0.3),
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                        color: selecttime.contains("1:00pm - 4:00pm")
-                            ? const Color.fromRGBO(248, 197, 105, 1)
-                            : const Color.fromARGB(255, 203, 203, 203)),
-                    child: Text(
-                      "1:00pm - 4:00pm",
-                      style: GoogleFonts.imprima(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: const Color.fromARGB(255, 92, 92, 92)),
-                    ),
-                  ),
-                ),
-                const Spacer(
-                  flex: 1,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (selecttime.contains("4:00pm - 7:00pm")) {
-                        selecttime.remove("4:00pm - 7:00pm");
-                      } else {
-                        selecttime.add("4:00pm - 7:00pm");
-                      }
-                    });
-                  },
-                  child: Container(
-                    height: 48,
-                    width: 140,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          style: BorderStyle.solid,
-                          color: const Color.fromRGBO(38, 28, 18, 0.3),
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                        color: selecttime.contains("4:00pm - 7:00pm")
-                            ? const Color.fromRGBO(248, 197, 105, 1)
-                            : const Color.fromARGB(255, 203, 203, 203)),
-                    child: Text(
-                      "4:00pm - 7:00pm",
-                      style: GoogleFonts.imprima(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: const Color.fromARGB(255, 92, 92, 92)),
-                    ),
-                  ),
-                ),
+                TimeSlotWidget(timeSlot: "12:00pm - 2:00pm"),
+                const Spacer(flex: 1,),
+                TimeSlotWidget(timeSlot: "2:00pm - 4:00pm"),
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                if (selecttime.contains("7:00pm - 10:00pm")) {
-                  selecttime.remove("7:00pm - 10:00pm");
-                } else {
-                  selecttime.add("7:00pm - 10:00pm");
-                }
-              });
-            },
-            child: Container(
-              height: 48,
-              width: 140,
-              margin: const EdgeInsets.only(left: 30),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  border: Border.all(
-                    style: BorderStyle.solid,
-                    color: const Color.fromRGBO(38, 28, 18, 0.3),
-                  ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                  color: selecttime.contains("7:00pm - 10:00pm")
-                      ? const Color.fromRGBO(248, 197, 105, 1)
-                      : const Color.fromARGB(255, 203, 203, 203)),
-              child: Text(
-                "7:00pm - 10:00pm",
-                style: GoogleFonts.imprima(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color.fromARGB(255, 92, 92, 92)),
-              ),
-            ),
-          ),
+          TimeSlotWidget(timeSlot: "4:00pm - 6:00pm"),
           const Spacer(
             flex: 1,
           ),
@@ -362,25 +166,10 @@ class _SignuphourState extends State<Signuphours> {
                         ))),
                 GestureDetector(
                   onTap: () {
-                    if (allfieldfill()) {
+                    if (regProvider.allfieldfill3()) {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return Signupver2(
-                          namecontroller: widget.namecontroller,
-                          emailcontroller: widget.emailcontroller,
-                          phonecontroller: widget.phonecontroller,
-                          passcontroller: widget.passcontroller,
-                          repasscontroller: widget.repasscontroller,
-                          businesscontroller: widget.businesscontroller,
-                          citycontroller: widget.citycontroller,
-                          informalcontroller: widget.informalcontroller,
-                          selectstate: widget.selectstate,
-                          streetcontroller: widget.streetcontroller,
-                          zipcodecontroller: widget.zipcodecontroller,
-                          data: widget.data,
-                          selectedSize: selectedSize,
-                          selecttime: selecttime,
-                        );
+                        return Signupver2();
                       }));
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
