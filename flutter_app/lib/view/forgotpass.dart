@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/view/loginotp.dart';
 import 'package:flutter_app/view/loginscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 class Forgotpass extends StatefulWidget {
   const Forgotpass({super.key});
@@ -11,9 +15,11 @@ class Forgotpass extends StatefulWidget {
 
 class _ForgotpassState extends State<Forgotpass> {
   TextEditingController phonecontroller = TextEditingController();
+
   bool isValidPhoneNumber(String number) {
     return RegExp(r'^\d{10}$').hasMatch(number);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,13 +55,12 @@ class _ForgotpassState extends State<Forgotpass> {
                 ),
               ),
             ),
-            // const SizedBox(height: 24,),
             Row(
               children: [
                 Container(
                   margin: const EdgeInsets.only(left: 30, top: 24),
                   child: Text(
-                    "Remember your pasword?",
+                    "Remember your password?",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.beVietnamPro(
                       fontSize: 14,
@@ -107,27 +112,25 @@ class _ForgotpassState extends State<Forgotpass> {
                 ),
               ),
             ),
-
             GestureDetector(
-              onTap: (){
-                 String phoneNumber = phonecontroller.text.trim();
-                  if (phoneNumber.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Please enter your phone number'),
-                      ),
-                    );
-                  } else if (!isValidPhoneNumber(phoneNumber)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Please enter a valid 10-digit phone number'),
-                      ),
-                    );
-                  } else {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return const LoginOtp();
-                    }));
-                  }
+              onTap: () {
+                // String phoneNumber = phonecontroller.text.trim();
+                // if (phoneNumber.isEmpty) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(
+                //       content: Text('Please enter your phone number'),
+                //     ),
+                //   );
+                // } else if (!isValidPhoneNumber(phoneNumber)) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(
+                //       content: Text('Please enter a valid 10-digit phone number'),
+                //     ),
+                //   );
+                // } else {
+                //   resetpassPostRequest();  // Call the function to send the POST request
+                // }
+                resetpassPostRequest(phonecontroller.text);
               },
               child: Container(
                 alignment: Alignment.center,
@@ -154,4 +157,33 @@ class _ForgotpassState extends State<Forgotpass> {
       ),
     );
   }
+
+
+  Future<void> resetpassPostRequest(String mobileNumber) async {
+  String baseUrl = 'https://sowlab.com';
+  String endpoint = '/assignment/#/Forgot%20password/post_user_forgot_password'; 
+  String fullUrl = baseUrl + endpoint;
+  Map<String, dynamic> requestData = {
+    'mobile': mobileNumber,
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(fullUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestData),
+    );
+    if (response.statusCode == 200) {
+      log('Success: ${response.body}');
+      log('OTP sent to your mobile');
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return LoginOtp();
+                }));
+    } else {
+      log('Error: ${response.statusCode}, ${response.body}');
+    }
+  } catch (e) {
+    log('Exception: $e');
+  }
+}
 }

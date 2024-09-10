@@ -18,7 +18,7 @@ class Signupver extends StatefulWidget {
   final TextEditingController streetcontroller;
   final TextEditingController citycontroller;
   final TextEditingController zipcodecontroller;
-  String selectstate;
+  String? selectstate;
   Signupver({
     super.key,
     required this.emailcontroller,

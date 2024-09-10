@@ -1,4 +1,7 @@
+
+
 import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/view/signupconf.dart';
@@ -16,7 +19,7 @@ class Signupver2 extends StatefulWidget {
   final TextEditingController streetcontroller;
   final TextEditingController citycontroller;
   final TextEditingController zipcodecontroller;
-  String selectstate;
+  String? selectstate;
   final FormData? data;
   final String? selectedSize;
   Set<String> selecttime;
@@ -226,36 +229,36 @@ class _Signupver2State extends State<Signupver2> {
       isLoading = true;
     });
 
-    // try {
-    //   String url = 'https://sowlab.com/assignment/#/Login%2FRegister/post_user_register';
+    try {
+      String url = 'https://sowlab.com/assignment/#/Login%2FRegister/post_user_register';
 
-    //   FormData formData = FormData.fromMap({
-    //     'name': widget.namecontroller.text,
-    //     'email': widget.emailcontroller.text,
-    //     'phone': widget.phonecontroller.text,
-    //     'password': widget.passcontroller.text,
-    //     'business_name': widget.businesscontroller.text,
-    //     'informal_name': widget.informalcontroller.text,
-    //     'street': widget.streetcontroller.text,
-    //     'city': widget.citycontroller.text,
-    //     'zipcode': widget.zipcodecontroller.text,
-    //     'state': widget.statecontroller.text,
-    //     'file': widget.data?.files[0],
-    //   });
-    //   Response response = await dio.post(url, data: formData);
+      FormData formData = FormData.fromMap({
+        'name': widget.namecontroller.text,
+        'email': widget.emailcontroller.text,
+        'phone': widget.phonecontroller.text,
+        'password': widget.passcontroller.text,
+        'business_name': widget.businesscontroller.text,
+        'informal_name': widget.informalcontroller.text,
+        'street': widget.streetcontroller.text,
+        'city': widget.citycontroller.text,
+        'zipcode': widget.zipcodecontroller.text,
+        'state': widget.selectstate,
+        'file': widget.data?.files[0],
+      });
+      Response response = await dio.post(url, data: formData);
 
-    //   if (response.statusCode == 200) {
-    //     Navigator.push(
-    //         context, MaterialPageRoute(builder: (context) => const Signupconf()));
-    //   } else {
-    //     log('Error: ${response.statusCode}, ${response.data}');
-    //   }
-    // } catch (e) {
-    //   log('Error: $e');
-    // } finally {
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    // }
+      if (response.statusCode == 200) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Signupconf()));
+      } else {
+        log('Error: ${response.statusCode}, ${response.data}');
+      }
+    } catch (e) {
+      log('Error: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 }

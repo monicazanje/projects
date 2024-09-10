@@ -15,7 +15,7 @@ class Signuphours extends StatefulWidget {
   final TextEditingController streetcontroller;
   final TextEditingController citycontroller;
   final TextEditingController zipcodecontroller;
-  String selectstate;
+  String? selectstate;
   final FormData? data;
   Signuphours(
       {super.key,
@@ -101,8 +101,9 @@ class _SignuphourState extends State<Signuphours> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(right: 30, left: 30),
+            margin: const EdgeInsets.only(right: 2+0, left: 30),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(days.length, (index) {
                 String day = days[index];
                 return Expanded(
@@ -114,6 +115,7 @@ class _SignuphourState extends State<Signuphours> {
                     },
                     child: Container(
                       height: 35,
+                      margin: const EdgeInsets.only(right: 10),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         border: Border.all(

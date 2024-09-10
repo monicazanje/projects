@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/view/loginscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
+// ignore: must_be_immutable
 class ResetPass extends StatefulWidget {
-  const ResetPass({super.key});
+  List<TextEditingController> otpcontroller =
+      List.generate(6, (_) => TextEditingController());
+  ResetPass({super.key,required this.otpcontroller});
   @override
   State<ResetPass> createState() => _ResetPassState();
 }
@@ -152,11 +158,7 @@ class _ResetPassState extends State<ResetPass> {
             ),
             GestureDetector(
               onTap: () {
-                if (validatePasswords()) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const Login();
-                  }));
-                }
+                resetpassPostRequest(widget.otpcontroller,newpasscontroller.text,confpasscontroller.text);
               },
               child: Container(
                 alignment: Alignment.center,
@@ -183,4 +185,101 @@ class _ResetPassState extends State<ResetPass> {
       ),
     );
   }
+  Future<void> resetpassPostRequest(List<TextEditingController> otpControllers, String newpass, String cnewpass) async {
+  String baseUrl = 'https://sowlab.com';
+  String endpoint = '/assignment/#/Verify%20OTP/post_user_reset_password'; 
+  String fullUrl = baseUrl + endpoint;
+  String otp = otpControllers.map((controller) => controller.text.trim()).join('');
+
+  Map<String, dynamic> requestData = {
+    'token': otp, 
+    'password': newpass, 
+    'cpassword': cnewpass 
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(fullUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestData),
+    );
+
+    log('Response body: ${response.body}');
+
+    if (response.headers['content-type']?.contains('application/json') == true) {
+      var responseBody = jsonDecode(response.body);
+
+      if (responseBody['success'] == 'true') {
+        log('Success: ${responseBody['message']}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(responseBody['message'])),
+        );
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return const Login();
+        }));
+      } else {
+        log('Failed: ${responseBody['message']}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(responseBody['message'])),
+        );
+      }
+    } else {
+
+      log('Error: Unexpected response format');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unexpected response from the server. Please try again later.')),
+      );
+    }
+  } catch (e) {
+    log('Exception: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Error occurred. Please try again later.')),
+    );
+  }
+}
+
+  
+//   Future<void> resetpassPostRequest(List<TextEditingController> token,String newpass,String cnewpass) async {
+//   String baseUrl = 'https://sowlab.com';
+//   String endpoint = '/assignment/#/Verify%20OTP/post_user_reset_password'; 
+//   String fullUrl = baseUrl + endpoint;
+//   String otp = widget.otpcontroller.map((controller) => controller.text.trim()).join('');
+//   Map<String, dynamic> requestData = {
+//     'token': otp,
+//     'password':newpass,
+//     'cpassword':cnewpass  
+//   };
+//  try {
+//     final response = await http.post(
+//       Uri.parse(fullUrl),
+//       headers: {'Content-Type': 'application/json'},
+//       body: jsonEncode(requestData),
+//     );
+//     if (response.statusCode == 200) {
+//       var responseBody = jsonDecode(response.body);
+
+//       if (responseBody['success'] == 'true') {
+//         log('Success: ${responseBody['message']}');
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text(responseBody['message'])),
+//         );
+//         Navigator.push(context, MaterialPageRoute(builder: (context) {
+//           return const Login();
+//         }));
+//       } else {
+//         log('Failed: ${responseBody['message']}');
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text(responseBody['message'])),
+//         );
+//       }
+//     } else {
+//       log('Error: ${response.statusCode}, ${response.body}');
+//     }
+//   } catch (e) {
+//     log('Exception: $e');
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       const SnackBar(content: Text('Error occurred. Please try again later.')),
+//     );
+//   }
+// }
 }

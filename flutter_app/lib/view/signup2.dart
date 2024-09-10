@@ -32,11 +32,10 @@ class _Signup2State extends State<Signup2> {
         informalcontroller.text.isNotEmpty &&
         streetcontroller.text.isNotEmpty &&
         citycontroller.text.isNotEmpty &&
-        zipcodecontroller.text.isNotEmpty &&
-        selectedState.isNotEmpty;
+        zipcodecontroller.text.isNotEmpty ;
   }
 
-  String selectedState="";
+  String? selectedState;
   List<String> statesOfIndia = [
     "Assam",
     "Bihar",
@@ -228,7 +227,7 @@ class _Signup2State extends State<Signup2> {
                         color: const Color.fromRGBO(0, 0, 0, 0.3),
                       ),
                     ),
-                    items: statesOfIndia.map((String state) {
+                    items: statesOfIndia.map<DropdownMenuItem<String>>((String state) {
                       return DropdownMenuItem<String>(
                         value: state,
                         child: Text(
