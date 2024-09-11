@@ -143,7 +143,9 @@ class _SignuphourState extends State<Signuphours> {
               ],
             ),
           ),
-          TimeSlotWidget(timeSlot: "4:00pm - 6:00pm"),
+          Container(
+            margin: const EdgeInsets.only(left: 30, right: 30, bottom: 10),
+            child: TimeSlotWidget(timeSlot: "4:00pm - 6:00pm")),
           const Spacer(
             flex: 1,
           ),
