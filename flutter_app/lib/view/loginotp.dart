@@ -106,7 +106,7 @@ class _LoginOtpState extends State<LoginOtp> {
                     decoration: const BoxDecoration(
                         color: Color.fromARGB(255, 226, 226, 226),
                         borderRadius: BorderRadius.all(Radius.circular(10))),
-                    width: 58,
+                    width: 50,
                     height: 59,
                     child: TextField(
                       controller: regProvider.otpcontroller[index],

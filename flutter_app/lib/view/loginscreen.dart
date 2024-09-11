@@ -1,9 +1,14 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/controller/resistercontroller.dart';
 import 'package:flutter_app/view/forgotpass.dart';
+import 'package:flutter_app/view/homescreen.dart';
 import 'package:flutter_app/view/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -12,8 +17,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
-  
   @override
   Widget build(BuildContext context) {
     final regProvider = Provider.of<RegisterController>(context);
@@ -145,7 +148,24 @@ class _LoginState extends State<Login> {
               ),
             ),
             GestureDetector(
-              onTap: (){regProvider.loginUser(context);},
+              onTap: () {
+                if (regProvider.emailController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Please enter your email address.')),
+                  );
+                } else if (regProvider.passController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Please enter your password.')),
+                  );
+                } else {
+                  loginPostRequest(
+                    regProvider.emailController.text,
+                    regProvider.passController.text,
+                  );
+                }
+              },
               child: Container(
                 alignment: Alignment.center,
                 width: MediaQuery.of(context).size.width * 0.6,
@@ -227,5 +247,47 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  Future<void> loginPostRequest(String name, String password) async {
+    String baseUrl = 'https://sowlab.com';
+    String endpoint = '/assignment/#/Login%2FRegister/post_user_login';
+    String fullUrl = baseUrl + endpoint;
+
+    Map<String, dynamic> requestData = {
+      "email": name,
+      "password": password,
+      "role": "farmer",
+      "device_token": "0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx",
+      "type": "email/facebook/google/apple",
+      "social_id": "0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+    };
+    try {
+      final response = await http.post(
+        Uri.parse(fullUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestData),
+      );
+      if (response.statusCode == 200) {
+        log('Success: ${response.body}');
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return const HomeScreen();
+        }));
+      } else {
+        log('Error: ${response.statusCode}, ${response.body}');
+        log('Error: Unexpected response format');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Unexpected response from the server. Please try again later.')),
+        );
+      }
+    } catch (e) {
+      log('Exception: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Error occurred. Please try again later.')),
+      );
+    }
   }
 }

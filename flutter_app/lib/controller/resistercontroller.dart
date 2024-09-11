@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/view/homescreen.dart';
 import 'package:flutter_app/view/signupconf.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,6 +27,8 @@ class RegisterController extends ChangeNotifier {
   String selectedSize='';
   Set<String> selectTime = {};
   bool isLoading = false;
+  bool passvisible = false;
+  bool newpassvisible=false;
   Map<String, List<String>> businessHours = {
     "mon": [],
     "tue": [],
@@ -37,6 +38,15 @@ class RegisterController extends ChangeNotifier {
     "sat": [],
     "sun": []
   };
+  
+  void togglePasswordVisibility() {
+    passvisible = !passvisible;
+    notifyListeners(); 
+  }
+  void toggleNewPasswordVisibility() {
+    newpassvisible = !newpassvisible;
+    notifyListeners(); 
+  }
   String? getFileName() {
     if (data != null) {
       for (var entry in data!.files) {
@@ -147,56 +157,6 @@ class RegisterController extends ChangeNotifier {
       return data;
     } else {
       log("result is null");
-    }
-  }
-
-    Future<void> loginUser(BuildContext context) async {
-    final String email = emailController.text;
-    final String password = passController.text;
-
-    if (email.isEmpty || password.isEmpty) {
-      errormsg = "Email and password cannot be empty!";
-      notifyListeners();
-      return;
-    }
-
-    String baseUrl = 'https://sowlab.com';
-    String endpoint = '/assignment/#/Login%2FRegister/post_user_login';
-    String url = baseUrl + endpoint;
-
-    isLoading = true;
-      errormsg= ''; 
-      notifyListeners();
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['success']) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-        } else {
-          errormsg = data['message'] ?? "Login failed!";
-          notifyListeners();
-        }
-      } else {
-        errormsg = "Invalid email or password!";
-        notifyListeners();
-      }
-    } catch (e) {
-      errormsg = "An error occurred. Please try again.";
-      notifyListeners();
-    } finally {
-      isLoading = false;
-      notifyListeners();
     }
   }
 

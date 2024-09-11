@@ -11,14 +11,12 @@ import 'package:provider/provider.dart';
 class ResetPass extends StatefulWidget {
   List<TextEditingController> otpcontroller =
       List.generate(6, (_) => TextEditingController());
-  ResetPass({super.key,required this.otpcontroller});
+  ResetPass({super.key, required this.otpcontroller});
   @override
   State<ResetPass> createState() => _ResetPassState();
 }
 
 class _ResetPassState extends State<ResetPass> {
-  
-
   @override
   Widget build(BuildContext context) {
     final regProvider = Provider.of<RegisterController>(context);
@@ -99,8 +97,8 @@ class _ResetPassState extends State<ResetPass> {
                   color: Color.fromARGB(255, 226, 226, 226),
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
-                controller:regProvider.passController,
-                obscureText: true,
+                controller: regProvider.passController,
+                obscureText: !regProvider.passvisible,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "New Password",
@@ -110,6 +108,16 @@ class _ResetPassState extends State<ResetPass> {
                     color: const Color.fromRGBO(0, 0, 0, 0.3),
                   ),
                   prefixIcon: Image.asset("assets/Vector.png"),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      regProvider.togglePasswordVisibility();
+                    },
+                    icon: Icon(
+                      regProvider.passvisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -122,7 +130,8 @@ class _ResetPassState extends State<ResetPass> {
                   borderRadius: BorderRadius.all(Radius.circular(10))),
               child: TextField(
                 controller: regProvider.repassController,
-                obscureText: true,
+                obscureText: !regProvider.newpassvisible,
+               
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "Confirm New Password",
@@ -132,12 +141,25 @@ class _ResetPassState extends State<ResetPass> {
                     color: const Color.fromRGBO(0, 0, 0, 0.3),
                   ),
                   prefixIcon: Image.asset("assets/Vector.png"),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      regProvider.toggleNewPasswordVisibility();
+                    },
+                    icon: Icon(
+                      regProvider.newpassvisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                  ),
                 ),
               ),
             ),
             GestureDetector(
               onTap: () {
-                resetpassPostRequest(regProvider.otpcontroller,regProvider.passController.text,regProvider.repassController.text);
+                resetpassPostRequest(
+                    regProvider.otpcontroller,
+                    regProvider.passController.text,
+                    regProvider.repassController.text);
               },
               child: Container(
                 alignment: Alignment.center,
@@ -164,41 +186,46 @@ class _ResetPassState extends State<ResetPass> {
       ),
     );
   }
-  Future<void> resetpassPostRequest(List<TextEditingController> otpControllers, String newpass, String cnewpass) async {
-  String baseUrl = 'https://sowlab.com';
-  String endpoint = '/assignment/#/Verify%20OTP/post_user_reset_password'; 
-  String fullUrl = baseUrl + endpoint;
-  String otp = otpControllers.map((controller) => controller.text.trim()).join('');
 
-  Map<String, dynamic> requestData = {
-    'token': otp, 
-    'password': newpass, 
-    'cpassword': cnewpass 
-  };
-  try {
-    final response = await http.post(
-      Uri.parse(fullUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(requestData),
-    );
-    if (response.statusCode == 200) {
-      log('Success: ${response.body}');
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const Login();
-                }));
-    } else {
-      log('Error: ${response.statusCode}, ${response.body}');
-      log('Error: Unexpected response format');
+  Future<void> resetpassPostRequest(List<TextEditingController> otpControllers,
+      String newpass, String cnewpass) async {
+    String baseUrl = 'https://sowlab.com';
+    String endpoint = '/assignment/#/Verify%20OTP/post_user_reset_password';
+    String fullUrl = baseUrl + endpoint;
+    String otp =
+        otpControllers.map((controller) => controller.text.trim()).join('');
+
+    Map<String, dynamic> requestData = {
+      'token': otp,
+      'password': newpass,
+      'cpassword': cnewpass
+    };
+    try {
+      final response = await http.post(
+        Uri.parse(fullUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestData),
+      );
+      if (response.statusCode == 200) {
+        log('Success: ${response.body}');
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return const Login();
+        }));
+      } else {
+        log('Error: ${response.statusCode}, ${response.body}');
+        log('Error: Unexpected response format');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Unexpected response from the server. Please try again later.')),
+        );
+      }
+    } catch (e) {
+      log('Exception: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Unexpected response from the server. Please try again later.')),
+        const SnackBar(
+            content: Text('Error occurred. Please try again later.')),
       );
     }
-  } catch (e) {
-    log('Exception: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Error occurred. Please try again later.')),
-    );
   }
-}
-
 }
